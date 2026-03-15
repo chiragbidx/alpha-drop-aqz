@@ -1,3 +1,4 @@
+"use client";
 import { createSubscriber } from "./../actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-// Minimal client wrapper for feedback and state
-"use client";
 function FormSubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
