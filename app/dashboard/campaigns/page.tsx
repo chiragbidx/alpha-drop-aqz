@@ -1,7 +1,7 @@
 import { getAuthSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client";
-import { emailCampaigns, campaignRecipients } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { emailCampaigns, campaignRecipients, teamMembers } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -12,11 +12,13 @@ export default async function CampaignsPage() {
     return <div>Unauthorized</div>;
   }
 
-  // Get this user's teamId from team_members
-  const [teamMember] = await db.query.teamMembers.findMany({
-    where: (tm, { eq }) => eq(tm.userId, session.userId),
-    limit: 1,
-  });
+  // Get this user's teamId from team_members table
+  const [teamMember] =
+    await db
+      .select()
+      .from(teamMembers)
+      .where(eq(teamMembers.userId, session.userId))
+      .limit(1);
 
   const teamId = teamMember?.teamId;
 
