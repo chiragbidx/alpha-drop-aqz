@@ -96,14 +96,14 @@ function AuthPageContent() {
       return {
         id: "signup",
         title: "Create account",
-        description: "Start your free account in less than a minute.",
+        description: "Sign up to launch, manage, and track your email campaigns.",
       };
     }
 
     return {
       id: "signin",
       title: "Sign in",
-      description: "Use your email and password to continue.",
+      description: "Sign in to launch, manage, and track your email campaigns.",
     };
   }, [mode]);
 
@@ -115,21 +115,20 @@ function AuthPageContent() {
           <div className="relative z-10 flex h-full flex-col justify-between">
             <div className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
-                Panda Access
+                InboxPilot Access
               </p>
               <h1 className="max-w-sm text-4xl font-semibold leading-tight tracking-tight">
-                Launch faster with one workspace for your team.
+                Welcome to InboxPilot
               </h1>
               <p className="max-w-md text-sm text-muted-foreground">
-                Secure auth, polished interface, and a clean onboarding flow built
-                for production teams.
+                Sign in to launch, manage, and track your email campaigns. Powerful analytics and subscriber management for growing businesses.
               </p>
             </div>
 
             <div className="relative overflow-hidden rounded-2xl border border-secondary/70 bg-background/80 p-3 shadow-lg">
               <Image
                 src="/demo-img.jpg"
-                alt="Panda product preview"
+                alt="InboxPilot product preview"
                 className="h-full w-full rounded-xl object-cover"
                 width={1200}
                 height={900}
