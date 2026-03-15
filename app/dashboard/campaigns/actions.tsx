@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { db } from "@/lib/db/client";
 import { getAuthSession } from "@/lib/auth/session";
-import { emailCampaigns } from "@/lib/db/schema";
+import { emailCampaigns, teamMembers } from "@/lib/db/schema";
 
 // InboxPilot: Server action for creating a campaign
 const createCampaignSchema = z.object({
@@ -18,10 +18,14 @@ export async function createCampaign(formData: FormData) {
   if (!session)
     return { ok: false, error: "Unauthorized", campaign: null };
 
-  const [teamMember] = await db.query.teamMembers.findMany({
-    where: (tm, { eq }) => eq(tm.userId, session.userId),
-    limit: 1,
-  });
+  // Use direct select query
+  const [teamMember] =
+    await db
+      .select()
+      .from(teamMembers)
+      .where(teamMembers.userId, "=", session.userId)
+      .limit(1);
+
   const teamId = teamMember?.teamId;
   if (!teamId)
     return { ok: false, error: "No team found", campaign: null };
