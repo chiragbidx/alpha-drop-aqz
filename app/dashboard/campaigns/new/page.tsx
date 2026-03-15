@@ -1,39 +1,27 @@
-"use client";
 import { createCampaign } from "./../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { redirect } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-function FormSubmitButton({ children }: { children: React.ReactNode }) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} className="w-full mt-4">
-      {pending ? "Saving..." : children}
-    </Button>
-  );
-}
-
-export default function NewCampaignPage() {
-  const [state, formAction] = useFormState(handleCreate, { ok: null, error: "" });
-
-  // Server-action handler (redirect on success)
-  async function handleCreate(prevState: any, formData: FormData) {
-    "use server";
-    const res = await createCampaign(formData);
-    if (res.ok) {
-      redirect("/dashboard/campaigns");
-    }
-    return { ok: res.ok, error: res.error ?? "" };
-  }
+// Server Component
+export default async function NewCampaignPage({
+  searchParams,
+}: {
+  searchParams?: { error?: string };
+}) {
+  // Parse error from search params if redirected back after error
+  const error =
+    searchParams?.error && typeof searchParams.error === "string"
+      ? decodeURIComponent(searchParams.error)
+      : "";
 
   return (
     <div className="max-w-xl mx-auto mt-12 bg-background p-6 rounded-lg border">
       <h1 className="text-2xl font-bold mb-3">Create Campaign</h1>
-      <form action={formAction} className="space-y-5">
+      <form action={createCampaignWithRedirect} className="space-y-5">
         <div>
           <Label htmlFor="name">Campaign Name</Label>
           <Input required minLength={3} maxLength={128} type="text" name="name" id="name" placeholder="Summer Launch" />
@@ -50,8 +38,8 @@ export default function NewCampaignPage() {
           <Label htmlFor="scheduledAt">Scheduled At <span className="italic text-xs text-muted-foreground">(optional)</span></Label>
           <Input type="datetime-local" name="scheduledAt" id="scheduledAt" />
         </div>
-        {state.error && <div className="text-destructive text-sm">{state.error}</div>}
-        <FormSubmitButton>Create Campaign</FormSubmitButton>
+        {error && <div className="text-destructive text-sm">{error}</div>}
+        <Button type="submit" className="w-full mt-4">Create Campaign</Button>
       </form>
       <div className="mt-4 text-right">
         <Link className="text-primary underline text-sm" href="/dashboard/campaigns">
@@ -60,4 +48,15 @@ export default function NewCampaignPage() {
       </div>
     </div>
   );
+}
+
+// Must be outside component for server action
+async function createCampaignWithRedirect(formData: FormData) {
+  "use server";
+  const res = await createCampaign(formData);
+  if (res.ok) {
+    redirect("/dashboard/campaigns");
+  }
+  // Redirect with error message as query param
+  redirect(`/dashboard/campaigns/new?error=${encodeURIComponent(res.error || "Failed to create campaign")}`);
 }
