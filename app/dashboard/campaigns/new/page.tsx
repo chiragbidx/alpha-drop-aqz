@@ -1,3 +1,4 @@
+"use client";
 import { createCampaign } from "./../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +8,6 @@ import { redirect } from "next/navigation";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
 
-// Minimal client wrapper for feedback and state
-"use client";
 function FormSubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
