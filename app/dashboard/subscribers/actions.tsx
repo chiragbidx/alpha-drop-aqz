@@ -37,15 +37,14 @@ export async function createSubscriber(formData: FormData) {
   if (!parse.success)
     return { ok: false, error: parse.error.message, subscriber: null };
 
-  // Uniqueness check by team and email
+  // Uniqueness check by team and email — FIX: remove destructure, use and/eq directly
   const existing = await db
     .select()
     .from(subscribers)
-    .where((sub, { and, eq }) =>
-      and(eq(sub.teamId, teamId), eq(sub.email, parse.data.email))
-    )
-    .first();
-  if (existing) {
+    .where(and(eq(subscribers.teamId, teamId), eq(subscribers.email, parse.data.email)))
+    .limit(1);
+
+  if (existing && existing.length > 0) {
     return { ok: false, error: "Subscriber already exists on this team", subscriber: null };
   }
 
