@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db/client";
 import { getAuthSession } from "@/lib/auth/session";
 import { emailCampaigns, teamMembers } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 
 // InboxPilot: Server action for creating a campaign
 const createCampaignSchema = z.object({
@@ -18,12 +19,12 @@ export async function createCampaign(formData: FormData) {
   if (!session)
     return { ok: false, error: "Unauthorized", campaign: null };
 
-  // Use direct select query
+  // Corrected: use eq() for query
   const [teamMember] =
     await db
       .select()
       .from(teamMembers)
-      .where(teamMembers.userId, "=", session.userId)
+      .where(eq(teamMembers.userId, session.userId))
       .limit(1);
 
   const teamId = teamMember?.teamId;
