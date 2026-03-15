@@ -28,8 +28,7 @@ export default async function SubscribersPage() {
       .select()
       .from(subscribers)
       .where(eq(subscribers.teamId, teamId))
-      .orderBy(subscribers.createdAt)
-      .all();
+      .orderBy(subscribers.createdAt);
   }
 
   return (
