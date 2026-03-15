@@ -28,8 +28,7 @@ export default async function CampaignsPage() {
       .select()
       .from(emailCampaigns)
       .where(eq(emailCampaigns.teamId, teamId))
-      .orderBy(emailCampaigns.createdAt)
-      .all();
+      .orderBy(emailCampaigns.createdAt);
   }
 
   return (
@@ -106,8 +105,7 @@ async function CampaignRecipientsCount({ campaignId }: { campaignId: string }) {
   const count = await db
     .select()
     .from(campaignRecipients)
-    .where(eq(campaignRecipients.campaignId, campaignId))
-    .all();
+    .where(eq(campaignRecipients.campaignId, campaignId));
 
   return <span>{count.length}</span>;
 }
