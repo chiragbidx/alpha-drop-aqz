@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db/client";
 import { getAuthSession } from "@/lib/auth/session";
 import { subscribers, teamMembers } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 
 // InboxPilot: Action to create a subscriber
 const createSubscriberSchema = z.object({
@@ -16,12 +17,12 @@ export async function createSubscriber(formData: FormData) {
   if (!session)
     return { ok: false, error: "Unauthorized", subscriber: null };
 
-  // Use direct select query
+  // Corrected: use eq() for query
   const [teamMember] =
     await db
       .select()
       .from(teamMembers)
-      .where(teamMembers.userId, "=", session.userId)
+      .where(eq(teamMembers.userId, session.userId))
       .limit(1);
 
   const teamId = teamMember?.teamId;
